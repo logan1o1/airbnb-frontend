@@ -12,7 +12,7 @@ interface ToastContextType {
 }
 
 export const ToastContext = createContext<ToastContextType>({
-  showToast: () => {},
+  showToast: () => { },
 });
 
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

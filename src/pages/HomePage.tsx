@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
 import { ListingCard } from "../components/ListingCard";
 import { SearchFilters } from "../components/SearchFilters";
+import { Button } from "../components/ui/Button";
 import { useListings } from "../hooks/useListings";
 import { useApiError } from "../hooks/useApiError";
 import type { Listing } from "../types";
 
 export const HomePage: React.FC = () => {
+  const navigate = useNavigate();
   const { listings, loading, error, getListings } = useListings();
   const { error: apiError } = useApiError();
   const [filteredListings, setFilteredListings] = useState<Listing[]>([]);
@@ -50,13 +53,21 @@ export const HomePage: React.FC = () => {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Explore Stays
-          </h1>
-          <p className="text-lg text-gray-600">
-            Discover amazing places to stay around the world
-          </p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              Explore Stays
+            </h1>
+            <p className="text-lg text-gray-600">
+              Discover amazing places to stay around the world
+            </p>
+          </div>
+          <Button
+            variant="primary"
+            onClick={() => navigate("/listings/new")}
+          >
+            + Create Listing
+          </Button>
         </div>
 
         {/* Search & Filters */}

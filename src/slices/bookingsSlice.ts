@@ -21,7 +21,7 @@ export const fetchBookings = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await bookingsAPI.getAll();
-      return response.data as Booking[];
+      return response.data.data as Booking[];
     } catch (error) {
       const apiError = error as { response?: { data?: { message?: string } } };
       return rejectWithValue(
@@ -36,7 +36,7 @@ export const fetchBookingById = createAsyncThunk(
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await bookingsAPI.getById(id);
-      return response.data as Booking;
+      return response.data.data as Booking;
     } catch (error) {
       const apiError = error as { response?: { data?: { message?: string } } };
       return rejectWithValue(
@@ -59,7 +59,7 @@ export const createBooking = createAsyncThunk(
   ) => {
     try {
       const response = await bookingsAPI.create(data);
-      return response.data as BookingWithPayment;
+      return response.data.data as BookingWithPayment;
     } catch (error) {
       const apiError = error as { response?: { data?: { message?: string } } };
       return rejectWithValue(

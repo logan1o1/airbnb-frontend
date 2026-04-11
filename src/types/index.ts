@@ -63,6 +63,32 @@ export interface BookingWithPayment {
   payment: Payment;
 }
 
+// API Response Types
+export interface CreateBookingResponse {
+  success: boolean;
+  data: {
+    booking: Booking;
+    razorpay_key: string;
+  };
+  message: string;
+}
+
+export interface PaymentResponse {
+  id: string;
+  booking_id: string;
+  amount: number;
+  razorpay_order_id: string;
+  razorpay_payment_id?: string;
+  status: string;
+  short_url?: string;
+  created_at: string;
+}
+
+export interface CreatePaymentResponse {
+  success: boolean;
+  data: PaymentResponse;
+}
+
 // API Types
 export interface ApiError {
   message: string;

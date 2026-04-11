@@ -29,10 +29,11 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ children }) => {
 
 interface CardContentProps {
   children: React.ReactNode;
+  className?: string;
 }
 
-export const CardContent: React.FC<CardContentProps> = ({ children }) => {
-  return <div className="space-y-4">{children}</div>;
+export const CardContent: React.FC<CardContentProps> = ({ children, className = "" }) => {
+  return <div className={`space-y-4 ${className}`}>{children}</div>;
 };
 
 interface CardFooterProps {

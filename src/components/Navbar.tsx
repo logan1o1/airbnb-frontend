@@ -33,7 +33,7 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* Right - Auth */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {isAuthenticated ? (
             <>
               <Button
@@ -43,26 +43,36 @@ export const Navbar: React.FC = () => {
               >
                 My Bookings
               </Button>
-              <div className="relative group">
-                <Button variant="secondary" size="sm">
-                  {user?.username || "Account"}
-                </Button>
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
-                  <div className="p-4 space-y-2">
-                    <p className="text-sm text-gray-600">
-                      {user?.email}
-                    </p>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={handleLogout}
-                      className="w-full"
-                    >
-                      Logout
-                    </Button>
-                  </div>
-                </div>
-              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => navigate("/listings")}
+              >
+                My Listings
+              </Button>
+              <span className="text-sm text-gray-600">
+                {user?.username || "Account"}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="p-2 text-gray-600 hover:text-red-500 transition-colors"
+                title="Logout"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+              </button>
             </>
           ) : (
             <Button

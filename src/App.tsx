@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "./store";
 import { ToastProvider } from "./contexts/ToastContext";
-import { LoginPage, SignupPage, HomePage, ListingDetailPage, MyBookingsPage } from "./pages";
+import { LoginPage, SignupPage, HomePage, ListingDetailPage, MyBookingsPage, AddListingPage, MyListingsPage, EditListingPage } from "./pages";
 
 function App() {
   const { token } = useSelector((state: RootState) => state.auth);
@@ -21,7 +21,10 @@ function App() {
           ) : (
             <>
               <Route path="/" element={<HomePage />} />
+              <Route path="/listings/new" element={<AddListingPage />} />
               <Route path="/listings/:id" element={<ListingDetailPage />} />
+              <Route path="/listings" element={<MyListingsPage />} />
+              <Route path="/listings/:id/edit" element={<EditListingPage />} />
               <Route path="/bookings" element={<MyBookingsPage />} />
               <Route path="*" element={<Navigate to="/" />} />
             </>

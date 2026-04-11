@@ -1,5 +1,6 @@
 export { Button } from "./ui/Button";
 export { Input } from "./ui/Input";
+export { DatePicker } from "./ui/DatePicker";
 export {
   Card,
   CardHeader,

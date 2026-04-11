@@ -51,12 +51,26 @@ export const authAPI = {
 export const listingsAPI = {
   getAll: () => api.get("/listings"),
   getById: (id: string) => api.get(`/listings/${id}`),
+  getMyListings: () => api.get("/listings/my_listings"),
   create: (data: {
     name: string;
     location: string;
     price: number;
     pictures?: string[];
   }) => api.post("/listings", data),
+  createWithImage: (formData: FormData) => 
+    api.post("/listings", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }),
+  update: (id: string, formData: FormData) =>
+    api.put(`/listings/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }),
+  delete: (id: string) => api.delete(`/listings/${id}`),
 };
 
 // Bookings endpoints
@@ -73,7 +87,7 @@ export const bookingsAPI = {
 
 // Payments endpoints
 export const paymentsAPI = {
-  create: (data: { booking_id: string; idempotency_key?: string }) =>
+  create: (data: { booking_id: string; idempotency_key: string; phone: string }) =>
     api.post("/payments", data),
 };
 

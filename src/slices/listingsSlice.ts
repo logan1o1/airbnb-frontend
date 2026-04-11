@@ -21,7 +21,7 @@ export const fetchListings = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await listingsAPI.getAll();
-      return response.data as Listing[];
+      return response.data.data as Listing[];
     } catch (error) {
       const apiError = error as { response?: { data?: { message?: string } } };
       return rejectWithValue(
@@ -36,7 +36,7 @@ export const fetchListingById = createAsyncThunk(
   async (id: string, { rejectWithValue }) => {
     try {
       const response = await listingsAPI.getById(id);
-      return response.data as Listing;
+      return response.data.data as Listing;
     } catch (error) {
       const apiError = error as { response?: { data?: { message?: string } } };
       return rejectWithValue(
@@ -54,11 +54,77 @@ export const createListing = createAsyncThunk(
   ) => {
     try {
       const response = await listingsAPI.create(data);
-      return response.data as Listing;
+      return response.data.data as Listing;
     } catch (error) {
       const apiError = error as { response?: { data?: { message?: string } } };
       return rejectWithValue(
         apiError.response?.data?.message || "Failed to create listing"
+      );
+    }
+  }
+);
+
+export const createListingWithImage = createAsyncThunk(
+  "listings/createListingWithImage",
+  async (
+    formData: FormData,
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await listingsAPI.createWithImage(formData);
+      return response.data.data as Listing;
+    } catch (error) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(
+        apiError.response?.data?.message || "Failed to create listing"
+      );
+    }
+  }
+);
+
+export const fetchMyListings = createAsyncThunk(
+  "listings/fetchMyListings",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await listingsAPI.getMyListings();
+      return response.data.data as Listing[];
+    } catch (error) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(
+        apiError.response?.data?.message || "Failed to fetch your listings"
+      );
+    }
+  }
+);
+
+export const updateListing = createAsyncThunk(
+  "listings/updateListing",
+  async (
+    { id, formData }: { id: string; formData: FormData },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await listingsAPI.update(id, formData);
+      return response.data.data as Listing;
+    } catch (error) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(
+        apiError.response?.data?.message || "Failed to update listing"
+      );
+    }
+  }
+);
+
+export const deleteListing = createAsyncThunk(
+  "listings/deleteListing",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await listingsAPI.delete(id);
+      return id;
+    } catch (error) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(
+        apiError.response?.data?.message || "Failed to delete listing"
       );
     }
   }
@@ -110,6 +176,57 @@ const listingsSlice = createSlice({
         state.listings.push(action.payload);
       })
       .addCase(createListing.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(createListingWithImage.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createListingWithImage.fulfilled, (state, action) => {
+        state.loading = false;
+        state.listings.push(action.payload);
+      })
+      .addCase(createListingWithImage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(fetchMyListings.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMyListings.fulfilled, (state, action) => {
+        state.loading = false;
+        state.listings = action.payload;
+      })
+      .addCase(fetchMyListings.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateListing.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateListing.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.listings.findIndex((l) => l.id === action.payload.id);
+        if (index !== -1) {
+          state.listings[index] = action.payload;
+        }
+      })
+      .addCase(updateListing.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteListing.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteListing.fulfilled, (state, action) => {
+        state.loading = false;
+        state.listings = state.listings.filter((l) => l.id !== action.payload);
+      })
+      .addCase(deleteListing.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
