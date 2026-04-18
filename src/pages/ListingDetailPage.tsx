@@ -4,6 +4,7 @@ import { Navbar } from "../components/Navbar";
 import { BookingModal } from "../components/BookingModal";
 import { useListings } from "../hooks/useListings";
 import { useAuth } from "../hooks/useAuth";
+import { getOptimizedImageUrl } from "../utils/imageUtils";
 import { Button } from "../components/ui/Button";
 
 export const ListingDetailPage: React.FC = () => {
@@ -74,9 +75,11 @@ export const ListingDetailPage: React.FC = () => {
           <div className="w-full h-96 bg-gray-200 rounded-lg overflow-hidden">
             {selectedListing.pictures && selectedListing.pictures.length > 0 ? (
               <img
-                src={selectedListing.pictures[0]}
+                src={getOptimizedImageUrl(selectedListing.pictures[0], 1200)}
                 alt={selectedListing.name}
                 className="w-full h-full object-cover"
+                loading="eager"
+                decoding="async"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-400">

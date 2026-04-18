@@ -4,6 +4,7 @@ import {
   fetchBookings,
   fetchBookingById,
   createBooking,
+  cancelBooking,
   clearError,
   clearCurrentBooking,
 } from "../slices/bookingsSlice";
@@ -54,6 +55,7 @@ export const useBookings = () => {
     getBookings,
     getBookingById,
     createNewBooking,
+    cancelBooking,
     clearError: handleClearError,
     clearCurrentBooking: handleClearCurrent,
   };

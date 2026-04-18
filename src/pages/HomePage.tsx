@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Navbar } from "../components/Navbar";
 import { ListingCard } from "../components/ListingCard";
@@ -16,14 +16,13 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     getListings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     setFilteredListings(listings);
   }, [listings]);
 
-  const handleSearch = (filters: {
+  const handleSearch = useCallback((filters: {
     location?: string;
     minPrice?: number;
     maxPrice?: number;
@@ -45,7 +44,7 @@ export const HomePage: React.FC = () => {
     }
 
     setFilteredListings(filtered);
-  };
+  }, [listings]);
 
   return (
     <div className="min-h-screen bg-gray-50">

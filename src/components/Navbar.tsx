@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { Button } from "./ui/Button";
@@ -7,10 +7,10 @@ export const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuth();
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     await logout();
     navigate("/login");
-  };
+  }, [logout, navigate]);
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">

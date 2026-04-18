@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "./store";
 import { ToastProvider } from "./contexts/ToastContext";
+import { Toaster } from "react-hot-toast";
 import { LoginPage, SignupPage, HomePage, ListingDetailPage, MyBookingsPage, AddListingPage, MyListingsPage, EditListingPage } from "./pages";
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
 
   return (
     <ToastProvider>
+      <Toaster position="top-center" />
       <BrowserRouter>
         <Routes>
           {!token ? (

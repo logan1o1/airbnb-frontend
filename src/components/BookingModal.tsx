@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useBookings } from "../hooks/useBookings";
@@ -55,17 +55,17 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setTotalPrice(daysDiff * listing.price);
   };
 
-  const handleFromDateChange = (date: string) => {
+  const handleFromDateChange = useCallback((date: string) => {
     setFromDate(date);
     if (toDate) calculatePrice(date, toDate);
-  };
+  }, [toDate]);
 
-  const handleToDateChange = (date: string) => {
+  const handleToDateChange = useCallback((date: string) => {
     setToDate(date);
     if (fromDate) calculatePrice(fromDate, date);
-  };
+  }, [fromDate]);
 
-  const handleBooking = async () => {
+  const handleBooking = useCallback(async () => {
     if (!token) {
       navigate("/login");
       return;
@@ -96,9 +96,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     } catch {
       showToast("Failed to create booking", "error");
     }
-  };
+  }, [token, fromDate, toDate, listing.id, createNewBooking, showToast]);
 
-  const handlePayment = async () => {
+  const handlePayment = useCallback(async () => {
     if (!bookingId) return;
 
     const result = await dispatch(createPayment({ bookingId, phone }));
@@ -114,9 +114,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           : "Failed to create payment";
       showToast(errorMsg, "error");
     }
-  };
+  }, [bookingId, phone, dispatch, showToast]);
 
-  const resetAndClose = () => {
+  const resetAndClose = useCallback(() => {
     setFromDate("");
     setToDate("");
     setNights(0);
@@ -126,7 +126,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     setStep("booking");
     dispatch(clearPaymentState());
     onClose();
-  };
+  }, [dispatch, onClose]);
 
   if (!isOpen) return null;
 

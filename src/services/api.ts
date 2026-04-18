@@ -83,6 +83,7 @@ export const bookingsAPI = {
     to: string;
     idempotency_key?: string;
   }) => api.post("/bookings", data),
+  cancelBooking: (id: string) => api.patch(`/bookings/${id}/cancel_booking`),
 };
 
 // Payments endpoints

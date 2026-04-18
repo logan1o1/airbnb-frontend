@@ -1,20 +1,59 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 import { Navbar } from "../components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { useBookings } from "../hooks/useBookings";
 import { useListings } from "../hooks/useListings";
+import { confirmToast } from "../utils/confirmToast";
+import type { AppDispatch } from "../store";
 
 export const MyBookingsPage: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { bookings, loading, error, getBookings } = useBookings();
-  const { listings } = useListings();
+  const { bookings, error, getBookings, cancelBooking } = useBookings();
+  const { listings, getListings } = useListings();
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
-    getBookings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const load = async () => {
+      await getBookings();
+      await getListings();
+      setInitialLoading(false);
+    };
+    load();
   }, []);
+
+  const handleCancelClick = (bookingId: string) => {
+    confirmToast({
+      title: "Cancel Booking?",
+      message: "Are you sure you want to cancel this booking?",
+      confirmText: "Yes, Cancel",
+      cancelText: "Keep",
+      onConfirm: () => handleCancelBooking(bookingId),
+    });
+  };
+
+  const handleCancelBooking = async (bookingId: string) => {
+    setCancellingId(bookingId);
+    try {
+      const result = await dispatch(cancelBooking(bookingId));
+      if (cancelBooking.fulfilled.match(result)) {
+        toast.success("Booking cancelled successfully");
+      } else {
+        toast.error((result.payload as string) || "Failed to cancel booking");
+      }
+    } catch {
+      toast.error("Failed to cancel booking");
+    } finally {
+      setCancellingId(null);
+    }
+  };
+
+  const activeBookings = bookings.filter((b) => b.status !== "cancelled");
 
   const getListingName = (listingId: string) => {
     return listings.find((l) => l.id === listingId)?.name || "Unknown Listing";
@@ -28,6 +67,8 @@ export const MyBookingsPage: React.FC = () => {
         return "bg-yellow-100 text-yellow-800";
       case "failed":
         return "bg-red-100 text-red-800";
+      case "cancelled":
+        return "bg-gray-100 text-gray-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -64,7 +105,7 @@ export const MyBookingsPage: React.FC = () => {
         )}
 
         {/* Loading State */}
-        {loading && (
+        {initialLoading && (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
               <div
@@ -76,10 +117,13 @@ export const MyBookingsPage: React.FC = () => {
         )}
 
         {/* Bookings List */}
-        {!loading && bookings.length > 0 && (
+        {!initialLoading && activeBookings.length > 0 && (
           <div className="space-y-4">
-            {bookings.map((booking) => (
-              <Card key={booking.id}>
+            {activeBookings.map((booking) => (
+              <Card
+                key={booking.id}
+                className={`transition-opacity duration-200 ${cancellingId === booking.id ? "opacity-50" : ""}`}
+              >
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
@@ -121,7 +165,7 @@ export const MyBookingsPage: React.FC = () => {
                         {Math.ceil(
                           (new Date(booking.to).getTime() -
                             new Date(booking.from).getTime()) /
-                            (1000 * 60 * 60 * 24)
+                          (1000 * 60 * 60 * 24)
                         )}
                       </p>
                     </div>
@@ -143,15 +187,14 @@ export const MyBookingsPage: React.FC = () => {
                     >
                       View Listing
                     </Button>
-                    {booking.status === "pending" && (
+                    {(booking.status === "pending" || booking.status === "failed") && (
                       <Button
                         variant="danger"
                         size="sm"
-                        onClick={() => {
-                          // Cancel booking logic
-                        }}
+                        disabled={cancellingId === booking.id}
+                        onClick={() => handleCancelClick(booking.id)}
                       >
-                        Cancel Booking
+                        {cancellingId === booking.id ? "Cancelling..." : "Cancel Booking"}
                       </Button>
                     )}
                   </div>
@@ -162,7 +205,7 @@ export const MyBookingsPage: React.FC = () => {
         )}
 
         {/* Empty State */}
-        {!loading && bookings.length === 0 && (
+        {!initialLoading && activeBookings.length === 0 && (
           <Card>
             <CardContent>
               <div className="text-center py-12">

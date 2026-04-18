@@ -8,6 +8,7 @@ import { Button } from "../components/ui/Button";
 import { Card, CardContent } from "../components";
 import { Navbar } from "../components/Navbar";
 import { useToast } from "../contexts/ToastContext";
+import { getOptimizedImageUrl } from "../utils/imageUtils";
 
 export const MyListingsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -83,9 +84,11 @@ export const MyListingsPage: React.FC = () => {
                 <div className="aspect-video bg-gray-200 relative">
                   {listing.pictures && listing.pictures.length > 0 ? (
                     <img
-                      src={listing.pictures[0]}
+                      src={getOptimizedImageUrl(listing.pictures[0], 600)}
                       alt={listing.name}
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400">

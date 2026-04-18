@@ -1,13 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "./ui/Card";
+import { getOptimizedImageUrl } from "../utils/imageUtils";
 import type { Listing } from "../types";
 
 interface ListingCardProps {
   listing: Listing;
 }
 
-export const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
+export const ListingCard: React.FC<ListingCardProps> = React.memo(({ listing }) => {
   const navigate = useNavigate();
 
   return (
@@ -19,9 +20,11 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
       <div className="w-full h-36 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden">
         {listing.pictures && listing.pictures.length > 0 ? (
           <img
-            src={listing.pictures[0]}
+            src={getOptimizedImageUrl(listing.pictures[0], 400)}
             alt={listing.name}
             className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -51,4 +54,4 @@ export const ListingCard: React.FC<ListingCardProps> = ({ listing }) => {
       </div>
     </Card>
   );
-};
+});

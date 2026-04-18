@@ -69,6 +69,21 @@ export const createBooking = createAsyncThunk(
   }
 );
 
+export const cancelBooking = createAsyncThunk(
+  "bookings/cancelBooking",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await bookingsAPI.cancelBooking(id);
+      return response.data;
+    } catch (error) {
+      const apiError = error as { response?: { data?: { message?: string } } };
+      return rejectWithValue(
+        apiError.response?.data?.message || "Failed to cancel booking"
+      );
+    }
+  }
+);
+
 const bookingsSlice = createSlice({
   name: "bookings",
   initialState,
@@ -119,6 +134,22 @@ const bookingsSlice = createSlice({
         state.currentBooking = action.payload;
       })
       .addCase(createBooking.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(cancelBooking.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(cancelBooking.fulfilled, (state, action) => {
+        state.loading = false;
+        const cancelledBooking = action.payload.data as Booking;
+        const index = state.bookings.findIndex((b) => b.id === cancelledBooking.id);
+        if (index !== -1) {
+          state.bookings[index] = cancelledBooking;
+        }
+      })
+      .addCase(cancelBooking.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

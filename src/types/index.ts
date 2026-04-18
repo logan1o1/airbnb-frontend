@@ -31,7 +31,7 @@ export interface Booking {
   user_id: number;
   from: string;
   to: string;
-  status: "pending" | "confirmed" | "failed";
+  status: "pending" | "confirmed" | "failed" | "cancelled";
   created_at: string;
   updated_at: string;
 }

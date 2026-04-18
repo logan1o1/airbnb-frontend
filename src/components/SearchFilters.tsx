@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 
@@ -15,20 +15,20 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({ onSearch }) => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     onSearch({
       location: location || undefined,
       minPrice: minPrice ? parseInt(minPrice) : undefined,
       maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
     });
-  };
+  }, [onSearch, location, minPrice, maxPrice]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setLocation("");
     setMinPrice("");
     setMaxPrice("");
     onSearch({});
-  };
+  }, [onSearch]);
 
   return (
     <div className="bg-white p-6 rounded-lg border border-gray-200 mb-8">
