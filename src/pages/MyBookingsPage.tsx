@@ -6,7 +6,6 @@ import { Navbar } from "../components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { useBookings } from "../hooks/useBookings";
-import { useListings } from "../hooks/useListings";
 import { confirmToast } from "../utils/confirmToast";
 import type { AppDispatch } from "../store";
 
@@ -14,14 +13,12 @@ export const MyBookingsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { bookings, error, getBookings, cancelBooking } = useBookings();
-  const { listings, getListings } = useListings();
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       await getBookings();
-      await getListings();
       setInitialLoading(false);
     };
     load();
@@ -54,10 +51,6 @@ export const MyBookingsPage: React.FC = () => {
   };
 
   const activeBookings = bookings.filter((b) => b.status !== "cancelled");
-
-  const getListingName = (listingId: string) => {
-    return listings.find((l) => l.id === listingId)?.name || "Unknown Listing";
-  };
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
@@ -128,7 +121,7 @@ export const MyBookingsPage: React.FC = () => {
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle>
-                        {getListingName(booking.booked_listing)}
+                        Listing ID: {booking.booked_listing}
                       </CardTitle>
                       <p className="text-sm text-gray-600 mt-1">
                         Booking ID: {booking.id}

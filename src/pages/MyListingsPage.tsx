@@ -14,7 +14,7 @@ export const MyListingsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { listings, loading, error } = useSelector((state: RootState) => state.listings);
+  const { myListings, myListingLoading, myListingError } = useSelector((state: RootState) => state.listings);
   const [deleteModalId, setDeleteModalId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export const MyListingsPage: React.FC = () => {
     navigate(`/listings/${listing.id}/edit`);
   };
 
-  if (loading && listings.length === 0) {
+  if (myListingLoading && myListings.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
@@ -64,13 +64,13 @@ export const MyListingsPage: React.FC = () => {
           </Button>
         </div>
 
-        {error && (
+        {myListingError && (
           <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-800">{error}</p>
+            <p className="text-red-800">{myListingError}</p>
           </div>
         )}
 
-        {listings.length === 0 ? (
+        {myListings.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow">
             <p className="text-lg text-gray-600 mb-4">You haven't created any listings yet.</p>
             <Button variant="primary" onClick={() => navigate("/listings/new")}>
@@ -79,7 +79,7 @@ export const MyListingsPage: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {listings.map((listing) => (
+            {myListings.map((listing: Listing) => (
               <Card key={listing.id} className="overflow-hidden">
                 <div className="aspect-video bg-gray-200 relative">
                   {listing.pictures && listing.pictures.length > 0 ? (

@@ -7,6 +7,9 @@ interface ListingsState {
   selectedListing: Listing | null;
   loading: boolean;
   error: string | null;
+  myListings: Listing[];
+  myListingLoading: boolean;
+  myListingError: string | null;
 }
 
 const initialState: ListingsState = {
@@ -14,6 +17,9 @@ const initialState: ListingsState = {
   selectedListing: null,
   loading: false,
   error: null,
+  myListings: [],
+  myListingLoading: false,
+  myListingError: null
 };
 
 export const fetchListings = createAsyncThunk(
@@ -192,16 +198,16 @@ const listingsSlice = createSlice({
         state.error = action.payload as string;
       })
       .addCase(fetchMyListings.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.myListingLoading = true;
+        state.myListingError = null;
       })
       .addCase(fetchMyListings.fulfilled, (state, action) => {
-        state.loading = false;
-        state.listings = action.payload;
+        state.myListingLoading = false;
+        state.myListings = action.payload;
       })
       .addCase(fetchMyListings.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
+        state.myListingLoading = false;
+        state.myListingError = action.payload as string;
       })
       .addCase(updateListing.pending, (state) => {
         state.loading = true;
@@ -212,6 +218,10 @@ const listingsSlice = createSlice({
         const index = state.listings.findIndex((l) => l.id === action.payload.id);
         if (index !== -1) {
           state.listings[index] = action.payload;
+        }
+        const myIndex = state.myListings.findIndex((l) => l.id === action.payload.id);
+        if (myIndex !== -1) {
+          state.myListings[myIndex] = action.payload;
         }
       })
       .addCase(updateListing.rejected, (state, action) => {
@@ -225,6 +235,7 @@ const listingsSlice = createSlice({
       .addCase(deleteListing.fulfilled, (state, action) => {
         state.loading = false;
         state.listings = state.listings.filter((l) => l.id !== action.payload);
+        state.myListings = state.myListings.filter((l) => l.id !== action.payload);
       })
       .addCase(deleteListing.rejected, (state, action) => {
         state.loading = false;
