@@ -6,6 +6,7 @@ import { useListings } from "../hooks/useListings";
 import { useAuth } from "../hooks/useAuth";
 import { getOptimizedImageUrl } from "../utils/imageUtils";
 import { Button } from "../components/ui/Button";
+import CustomCarosul from "@/components/ui/Carousel";
 
 export const ListingDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,8 +19,7 @@ export const ListingDetailPage: React.FC = () => {
     if (id) {
       getListingById(id);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, getListingById]);
 
   if (loading) {
     return (
@@ -70,23 +70,15 @@ export const ListingDetailPage: React.FC = () => {
           ← Back to listings
         </button>
 
-        {/* Images */}
+        {/* Images Carousel */}
         <div className="mb-8">
-          <div className="w-full h-96 bg-gray-200 rounded-lg overflow-hidden">
-            {selectedListing.pictures && selectedListing.pictures.length > 0 ? (
-              <img
-                src={getOptimizedImageUrl(selectedListing.pictures[0], 1200)}
-                alt={selectedListing.name}
-                className="w-full h-full object-cover"
-                loading="eager"
-                decoding="async"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                No image available
-              </div>
-            )}
-          </div>
+          {selectedListing.pictures && selectedListing.pictures.length > 0 ? (
+            <CustomCarosul imagesArray={selectedListing.pictures.map(pic => getOptimizedImageUrl(pic, 1200))} />
+          ) : (
+            <div className="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+              No images available
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-8">

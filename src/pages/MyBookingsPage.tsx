@@ -12,17 +12,14 @@ import type { AppDispatch } from "../store";
 export const MyBookingsPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { bookings, error, getBookings, cancelBooking } = useBookings();
+  const { bookings, error, loading, getBookings, cancelBooking } = useBookings();
   const [cancellingId, setCancellingId] = useState<string | null>(null);
-  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
-    const load = async () => {
-      await getBookings();
-      setInitialLoading(false);
-    };
-    load();
-  }, []);
+    if (bookings.length === 0 && !loading && !error) {
+      getBookings();
+    }
+  }, [bookings.length, error, getBookings]);
 
   const handleCancelClick = (bookingId: string) => {
     confirmToast({
@@ -98,7 +95,7 @@ export const MyBookingsPage: React.FC = () => {
         )}
 
         {/* Loading State */}
-        {initialLoading && (
+        {loading && bookings.length === 0 && (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
               <div
@@ -110,7 +107,7 @@ export const MyBookingsPage: React.FC = () => {
         )}
 
         {/* Bookings List */}
-        {!initialLoading && activeBookings.length > 0 && (
+        {!loading && activeBookings.length > 0 && (
           <div className="space-y-4">
             {activeBookings.map((booking) => (
               <Card
@@ -198,7 +195,7 @@ export const MyBookingsPage: React.FC = () => {
         )}
 
         {/* Empty State */}
-        {!initialLoading && activeBookings.length === 0 && (
+        {!loading && activeBookings.length === 0 && (
           <Card>
             <CardContent>
               <div className="text-center py-12">
